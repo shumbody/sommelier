@@ -3,21 +3,23 @@ import json
 from sparkey import HashReader as SHR
 import requests
 import re
+import random
 
 class ResultsView(object):
 	product_ids = []
 
 	def __init__(self, db):
 		self.db = db
-		f = open('product_ids_sample.txt','rb')
+		f = open('product_id_samples.txt','rb')
 		self.product_ids = [line.strip() for line in f.readlines()]
 
 	def on_get(self, req, resp):
 		data_str = []
 
 		for pid in self.product_ids:
-			data = json.loads(self.db.get(pid))
-			data_str.append(json.dumps(data))
+			if random.random() < 0.2:
+				data = json.loads(self.db.get(pid))
+				data_str.append(json.dumps(data))
 		resp.body = '[' + ','.join(data_str) + ']'
 
 class ProductDetailView(object):
